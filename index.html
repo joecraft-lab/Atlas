@@ -1696,15 +1696,15 @@ async function generateSnapshot() {
     const context = buildContext();
     const prompt = buildSnapshotPrompt(context);
 
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
+    const response = await fetch('https://atlas.josephrushworth98.workers.dev', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    model: 'claude-sonnet-4-20250514',
+    max_tokens: 1000,
+    messages: [{ role: 'user', content: prompt }]
+  })
+});
 
     const data = await response.json();
     const text = data.content?.find(c => c.type === 'text')?.text || 'No response generated.';
