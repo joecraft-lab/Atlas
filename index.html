@@ -788,13 +788,12 @@ body::before {
 
     <div class="card">
       <div class="card-title">GARMIN — RECOVERY DATA</div>
-      <div class="upload-zone" id="garmin-zone">
-        <input type="file" accept=".csv,.fit,.json" onchange="handleGarminUpload(event)">
-        <div class="upload-icon">⌚</div>
-        <div class="upload-label">Upload Garmin CSV</div>
-        <div class="upload-sub">Garmin Connect → Health Stats → Export CSV</div>
-        <div class="upload-loaded" id="garmin-loaded" style="display:none"></div>
-      </div>
+      <label style="display:block;width:100%;padding:14px;margin-bottom:10px;background:var(--surface2);color:var(--text2);border:1px solid var(--border);border-radius:8px;font-size:13px;text-align:center;cursor:pointer">
+        ⌚ &nbsp;Tap to select Garmin CSV (Sleep or HRV)
+        <input type="file" accept="*/*" onchange="handleGarminUpload(event)" style="display:none">
+      </label>
+      <div class="upload-loaded" id="garmin-loaded" style="display:none;color:var(--accent3);font-size:12px;font-weight:600;padding:4px 0"></div>
+      <div id="garmin-zone" style="display:none"></div>
       <div style="margin-top:10px;padding:10px;background:var(--surface2);border-radius:8px;font-size:11px;color:var(--text3);line-height:1.6">
         <strong style="color:var(--text2)">How to export from Garmin Connect:</strong><br>
         1. Open Garmin Connect on desktop<br>
@@ -939,7 +938,9 @@ function handleGarminUpload(e) {
       });
       STATE.garmin.sort((a,b) => a.date.localeCompare(b.date));
       STATE.parsed.recovery = STATE.garmin;
-      markLoaded('garmin-zone', 'garmin-loaded', `✓ ${file.name} — ${STATE.garmin.length} days merged`);
+      const gLoaded = document.getElementById('garmin-loaded');
+      gLoaded.style.display = 'block';
+      gLoaded.textContent = `✓ ${file.name} — ${STATE.garmin.length} days merged`;
       renderRecovery();
       updateStatus();
       renderSnapshot();
