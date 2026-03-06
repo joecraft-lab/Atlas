@@ -1021,8 +1021,7 @@ function parseCronometerCSV(text) {
   const lines = text.split('\n').filter(l => l.trim());
   if (lines.length < 2) return [];
 
-  // Cronometer CSV: first row is headers
-  const headers = parseCSVLine(lines[0]).map(h => h.trim().replace(/"/g, ''));
+  const headers = parseCSVLine(lines[0].replace(/^\uFEFF/, '')).map(h => h.trim().replace(/"/g, ''));
   const rows = [];
 
   for (let i = 1; i < lines.length; i++) {
@@ -1031,29 +1030,30 @@ function parseCronometerCSV(text) {
     const row = {};
     headers.forEach((h, idx) => { row[h] = (vals[idx] || '').replace(/"/g, '').trim(); });
 
-    // Cronometer uses "Date" column
     const date = row['Date'] || row['date'] || '';
     if (!date) continue;
-
-    // Normalize date to yyyy-MM-dd
     const dateNorm = normalizeDate(date);
     if (!dateNorm) continue;
 
+    // Exact column names from Cronometer daily summary export
     rows.push({
-      date: dateNorm,
-      calories:  parseFloat(row['Energy (kcal)'] || row['Calories'] || 0),
-      protein:   parseFloat(row['Protein (g)']   || 0),
-      carbs:     parseFloat(row['Carbohydrates (g)'] || row['Carbs (g)'] || 0),
-      fat:       parseFloat(row['Fat (g)']        || 0),
-      fiber:     parseFloat(row['Fiber (g)']      || 0),
-      vitD:      parseFloat(row['Vitamin D (IU)'] || row['Vitamin D (µg)'] || 0),
-      magnesium: parseFloat(row['Magnesium (mg)'] || 0),
-      zinc:      parseFloat(row['Zinc (mg)']      || 0),
-      vitC:      parseFloat(row['Vitamin C (mg)'] || 0),
-      calcium:   parseFloat(row['Calcium (mg)']   || 0),
-      iron:      parseFloat(row['Iron (mg)']      || 0),
-      potassium: parseFloat(row['Potassium (mg)'] || 0),
-      omega3:    parseFloat(row['Omega-3 (g)'] || row['EPA (mg)'] || 0),
+      date:      dateNorm,
+      calories:  parseFloat(row['Energy (kcal)']        || 0),
+      protein:   parseFloat(row['Protein (g)']           || 0),
+      carbs:     parseFloat(row['Carbs (g)']             || 0),
+      fat:       parseFloat(row['Fat (g)']               || 0),
+      fiber:     parseFloat(row['Fiber (g)']             || 0),
+      vitD:      parseFloat(row['Vitamin D (IU)']        || 0),
+      magnesium: parseFloat(row['Magnesium (mg)']        || 0),
+      zinc:      parseFloat(row['Zinc (mg)']             || 0),
+      vitC:      parseFloat(row['Vitamin C (mg)']        || 0),
+      calcium:   parseFloat(row['Calcium (mg)']          || 0),
+      iron:      parseFloat(row['Iron (mg)']             || 0),
+      potassium: parseFloat(row['Potassium (mg)']        || 0),
+      omega3:    parseFloat(row['Omega-3 (g)']           || 0),
+      vitB12:    parseFloat(row['B12 (Cobalamin) (µg)']  || 0),
+      sodium:    parseFloat(row['Sodium (mg)']           || 0),
+      completed: row['Completed'] === 'true',
     });
   }
 
